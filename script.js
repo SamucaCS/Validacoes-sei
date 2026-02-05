@@ -5,9 +5,10 @@ const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const formElement = document.getElementById("seiForm");
 
 if (formElement) {
-  document.getElementById("cpf").addEventListener("input", function (e) {
-    let v = e.target.value.replace(/\D/g, "");
-    if (v.length > 11) v = v.slice(0, 11);
+  const maskNumbers = (v) => v.replace(/\D/g, "");
+
+  document.getElementById("cpf").addEventListener("input", (e) => {
+    let v = maskNumbers(e.target.value).slice(0, 11);
     v = v
       .replace(/(\d{3})(\d)/, "$1.$2")
       .replace(/(\d{3})(\d)/, "$1.$2")
@@ -15,16 +16,23 @@ if (formElement) {
     e.target.value = v;
   });
 
+  document.getElementById("rg").addEventListener("input", (e) => {
+    e.target.value = e.target.value.toUpperCase().slice(0, 12);
+  });
+
   formElement.addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = document.querySelector(".btn-glow");
     const originalText = btn.innerText;
-    btn.innerText = "Validando...";
+    btn.innerText = "Salvando...";
     btn.disabled = true;
 
     const dados = {
       nome: document.getElementById("nome").value.toUpperCase(),
-      cpf: document.getElementById("cpf").value.replace(/\D/g, ""),
+      cpf: maskNumbers(document.getElementById("cpf").value),
+      rg: document.getElementById("rg").value,
+      email: document.getElementById("email").value,
+      origem: document.getElementById("origem").value,
       escola: document.getElementById("escola").value,
       designado: document.getElementById("designado").value,
       cargo: document.getElementById("cargo").value,
@@ -34,10 +42,10 @@ if (formElement) {
     try {
       const { error } = await _supabase.from("validacoes").insert([dados]);
       if (error) throw error;
-      alert("Acesso VALIDADO com sucesso!");
+      alert("Cadastro realizado com sucesso via " + dados.origem + "!");
       formElement.reset();
     } catch (error) {
-      alert("Erro ao validar: " + error.message);
+      alert("Erro: " + error.message);
     } finally {
       btn.innerText = originalText;
       btn.disabled = false;
@@ -48,93 +56,96 @@ if (formElement) {
 const tabelaElement = document.getElementById("tabelaDados");
 
 if (tabelaElement) {
-  document.addEventListener("DOMContentLoaded", carregarDados);
-  const searchInput = document.getElementById("search");
-  const cargoFilter = document.getElementById("filtroCargo");
-  if (searchInput) searchInput.addEventListener("keyup", filtrarTabela);
-  if (cargoFilter) cargoFilter.addEventListener("change", filtrarTabela);
-  const formEdicao = document.getElementById("formEdicao");
-  if (formEdicao) {
-    formEdicao.addEventListener("submit", salvarEdicao);
-  }
-}
-
-function filtrarTabela() {
-  const termo = document.getElementById("search").value.toLowerCase();
-  const cargoSelecionado = document.getElementById("filtroCargo").value;
-  const linhas = document
-    .getElementById("tabelaDados")
-    .getElementsByTagName("tr");
-
-  for (let tr of linhas) {
-    if (tr.cells.length < 2) continue;
-    const textoLinha = tr.textContent.toLowerCase();
-    const colunaCargo = tr.cells[3] ? tr.cells[3].textContent : "";
-    const matchPesquisa = textoLinha.includes(termo);
-    const matchCargo =
-      cargoSelecionado === "" || colunaCargo === cargoSelecionado;
-    tr.style.display = matchPesquisa && matchCargo ? "" : "none";
-  }
-}
-
-async function carregarDados() {
-  const tbody = document.getElementById("tabelaDados");
-  const stats = {
-    designados: document.getElementById("statDesignados"),
-    cessados: document.getElementById("statCessados"),
-    diretores: document.getElementById("statDiretores"),
-    vices: document.getElementById("statVices"),
-    coordenadores: document.getElementById("statCoordenadores"),
-    aoe: document.getElementById("statAOE"),
+  const urlParams = new URLSearchParams(window.location.search);
+  const viewAtual = urlParams.get("view") || "geral";
+  const titles = {
+    geral: "Visão Geral",
+    gabinete: "Painel Gabinete",
+    seape: "Painel Seape",
   };
+  document.getElementById("pageTitle").innerText = titles[viewAtual];
+  document.getElementById("filtroAtivoTexto").innerText =
+    viewAtual === "geral" ? "Todos os Setores" : "Setor: " + viewAtual;
 
-  if (!tbody) return;
+  document
+    .querySelectorAll(".sidebar nav a")
+    .forEach((a) => a.classList.remove("active"));
+  const linkId =
+    "link" + viewAtual.charAt(0).toUpperCase() + viewAtual.slice(1);
+  if (document.getElementById(linkId))
+    document.getElementById(linkId).classList.add("active");
+
+  document.addEventListener("DOMContentLoaded", () => carregarDados(viewAtual));
+  document
+    .getElementById("search")
+    .addEventListener("keyup", filtrarLocalmente);
+  document
+    .getElementById("filtroCargo")
+    .addEventListener("change", filtrarLocalmente);
+
+  const formEdicao = document.getElementById("formEdicao");
+  if (formEdicao) formEdicao.addEventListener("submit", salvarEdicao);
+}
+
+async function carregarDados(view) {
+  const tbody = document.getElementById("tabelaDados");
   tbody.innerHTML =
-    "<tr><td colspan='7' style='text-align:center; padding: 20px;'>Carregando dados...</td></tr>";
+    "<tr><td colspan='7' style='text-align:center; padding:20px;'>Carregando...</td></tr>";
 
-  const { data, error } = await _supabase
+  let query = _supabase
     .from("validacoes")
     .select("*")
     .order("created_at", { ascending: false });
 
+  if (view !== "geral") {
+    const origemCapitalizada = view.charAt(0).toUpperCase() + view.slice(1);
+    query = query.eq("origem", origemCapitalizada);
+  }
+
+  const { data, error } = await query;
+
   if (error) {
     console.error(error);
     tbody.innerHTML =
-      "<tr><td colspan='7' style='text-align:center; color: red;'>Erro ao buscar dados.</td></tr>";
+      "<tr><td colspan='7' style='color:red; text-align:center'>Erro ao carregar dados.</td></tr>";
     return;
   }
 
-  if (data) {
-    if (stats.designados)
-      stats.designados.innerText = data.filter(
-        (d) => d.designado === "Sim",
-      ).length;
-    if (stats.cessados)
-      stats.cessados.innerText = data.filter(
-        (d) => d.designado === "Não",
-      ).length;
-    if (stats.diretores)
-      stats.diretores.innerText = data.filter(
-        (d) => d.cargo === "Diretor",
-      ).length;
-    if (stats.vices)
-      stats.vices.innerText = data.filter(
-        (d) => d.cargo === "Vice Diretor",
-      ).length;
-    if (stats.coordenadores)
-      stats.coordenadores.innerText = data.filter(
-        (d) => d.cargo === "Coordenador",
-      ).length;
-    if (stats.aoe)
-      stats.aoe.innerText = data.filter(
-        (d) => d.cargo === "Agente Organizacional",
-      ).length;
-  }
+  atualizarStats(data);
+  renderizarTabela(data);
+}
 
+function atualizarStats(data) {
+  if (!data) return;
+  const count = (filterFn) => data.filter(filterFn).length;
+
+  document.getElementById("statDesignados").innerText = count(
+    (d) => d.designado === "Designado",
+  );
+  document.getElementById("statCessados").innerText = count(
+    (d) => d.designado === "Cessado",
+  );
+  document.getElementById("statDiretores").innerText = count(
+    (d) => d.cargo === "Diretor",
+  );
+  document.getElementById("statVices").innerText = count(
+    (d) => d.cargo === "Vice Diretor",
+  );
+  document.getElementById("statCoordenadores").innerText = count(
+    (d) => d.cargo === "Coordenador",
+  );
+  document.getElementById("statAOE").innerText = count(
+    (d) => d.cargo === "Agente Organizacional",
+  );
+}
+
+function renderizarTabela(data) {
+  const tbody = document.getElementById("tabelaDados");
   tbody.innerHTML = "";
+
   if (data.length === 0) {
     tbody.innerHTML =
-      "<tr><td colspan='7' style='text-align:center; padding: 20px;'>Nenhum registro encontrado.</td></tr>";
+      "<tr><td colspan='7' style='text-align:center; padding:20px;'>Nenhum registro para este setor.</td></tr>";
     return;
   }
 
@@ -143,74 +154,105 @@ async function carregarDados() {
       /(\d{3})(\d{3})(\d{3})(\d{2})/,
       "***.$2.$3-$4",
     );
-    const nomes = item.nome.split(" ");
-    const iniciais = (
-      nomes[0][0] + (nomes.length > 1 ? nomes[nomes.length - 1][0] : "")
-    ).toUpperCase();
+    const iniciais = item.nome
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+
+    const origemClass =
+      item.origem === "Seape" ? "origem-seape" : "origem-gabinete";
+    const origemLabel = item.origem || "N/A";
+    const statusClass =
+      item.designado === "Designado" ? "badge active" : "badge inactive";
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
+        <td><span class="origem-tag ${origemClass}">${origemLabel}</span></td>
         <td>
-            <div class="colaborador-info">
-                <div class="mini-avatar">${iniciais}</div>
-                <span style="font-weight: 600; color: #455a64;">${item.nome}</span>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:30px; height:30px; background:#eee; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:11px; font-weight:bold;">${iniciais}</div>
+                <span style="font-weight:600;">${item.nome}</span>
             </div>
         </td>
-        <td style="color:#78909c; font-family:monospace;">${cpfVisual}</td>
+        <td>
+            <div style="font-size:11px; color:#777;">CPF: ${cpfVisual}</div>
+            <div style="font-size:11px; color:#777;">RG: ${item.rg || "-"}</div>
+        </td>
         <td>${item.escola}</td>
         <td>${item.cargo}</td>
-        <td>${item.designado}</td>
-        <td><span class="badge active">Validado</span></td>
+        <td><span class="${statusClass}">${item.designado}</span></td>
         <td>
-            <div class="actions-cell">
-                <button onclick="abrirModalEdicao('${item.id}', '${item.nome}', '${item.cpf}', '${item.escola}', '${item.designado}', '${item.cargo}')" class="btn-action btn-edit" title="Editar">
-                    <i class='bx bx-edit-alt'></i>
-                </button>
-                <button onclick="excluirUsuario('${item.id}', '${item.nome}')" class="btn-action btn-delete" title="Excluir">
-                    <i class='bx bx-trash'></i>
-                </button>
-            </div>
+            <button onclick="abrirEdicao('${item.id}', '${item.nome}', '${item.cpf}', '${item.rg}', '${item.email}', '${item.origem}', '${item.escola}', '${item.designado}', '${item.cargo}')" style="border:none; background:transparent; cursor:pointer; color:blue;"><i class='bx bx-edit'></i></button>
+            <button onclick="excluir('${item.id}')" style="border:none; background:transparent; cursor:pointer; color:red;"><i class='bx bx-trash'></i></button>
         </td>
     `;
     tbody.appendChild(tr);
   });
-  filtrarTabela();
 }
 
-// --- LÓGICA DE EXCLUSÃO ---
-async function excluirUsuario(id, nome) {
-  if (confirm(`Tem certeza que deseja excluir o registro de ${nome}?`)) {
-    const { error } = await _supabase.from("validacoes").delete().eq("id", id);
+function filtrarLocalmente() {
+  const termo = document.getElementById("search").value.toLowerCase();
+  const cargo = document.getElementById("filtroCargo").value;
+  const linhas = document.querySelectorAll("#tabelaDados tr");
 
-    if (error) {
-      alert("Erro ao excluir: " + error.message);
-    } else {
-      alert("Registro excluído com sucesso.");
-      carregarDados(); 
-    }
+  linhas.forEach((tr) => {
+    if (tr.cells.length < 2) return;
+    const texto = tr.innerText.toLowerCase();
+    const cargoLinha = tr.cells[4].innerText;
+    const matchSearch = texto.includes(termo);
+    const matchCargo = cargo === "" || cargoLinha === cargo;
+    tr.style.display = matchSearch && matchCargo ? "" : "none";
+  });
+}
+
+async function excluir(id) {
+  if (confirm("Excluir registro?")) {
+    await _supabase.from("validacoes").delete().eq("id", id);
+    location.reload();
   }
 }
 
-function abrirModalEdicao(id, nome, cpf, escola, designado, cargo) {
+function abrirEdicao(
+  id,
+  nome,
+  cpf,
+  rg,
+  email,
+  origem,
+  escola,
+  designado,
+  cargo,
+) {
   document.getElementById("editId").value = id;
   document.getElementById("editNome").value = nome;
   document.getElementById("editCpf").value = cpf;
-  document.getElementById("editEscola").value = escola;
+  document.getElementById("editRg").value =
+    rg !== "undefined" && rg !== "null" ? rg : "";
+  document.getElementById("editEmail").value =
+    email !== "undefined" && email !== "null" ? email : "";
+  document.getElementById("editOrigem").value = origem || "Gabinete";
   document.getElementById("editDesignado").value = designado;
   document.getElementById("editCargo").value = cargo;
 
-  const selectEscola = document.getElementById("editEscola");
-  let opcaoExiste = Array.from(selectEscola.options).some(
-    (op) => op.value === escola,
-  );
-  if (!opcaoExiste) {
+  const selEscola = document.getElementById("editEscola");
+  let escolaExiste = false;
+
+  for (let i = 0; i < selEscola.options.length; i++) {
+    if (selEscola.options[i].value === escola) {
+      escolaExiste = true;
+      break;
+    }
+  }
+  if (!escolaExiste) {
     let opt = document.createElement("option");
     opt.value = escola;
     opt.innerHTML = escola;
-    opt.selected = true;
-    selectEscola.appendChild(opt);
+    selEscola.appendChild(opt);
   }
 
+  selEscola.value = escola;
   document.getElementById("modalEdicao").classList.remove("hidden");
 }
 
@@ -220,34 +262,36 @@ function fecharModal() {
 
 async function salvarEdicao(e) {
   e.preventDefault();
-
   const id = document.getElementById("editId").value;
-  const btnSalvar = document.querySelector(".btn-save");
-  const textoOriginal = btnSalvar.innerText;
-  btnSalvar.innerText = "Salvando...";
-  btnSalvar.disabled = true;
+  const btnSave = document.querySelector("#formEdicao .btn-save");
+  const originalText = btnSave.innerText;
 
-  const dadosAtualizados = {
+  btnSave.innerText = "Salvando...";
+  btnSave.disabled = true;
+
+  const dados = {
     nome: document.getElementById("editNome").value.toUpperCase(),
     cpf: document.getElementById("editCpf").value.replace(/\D/g, ""),
-    escola: document.getElementById("editEscola").value,
+    rg: document.getElementById("editRg").value,
+    email: document.getElementById("editEmail").value,
+    origem: document.getElementById("editOrigem").value,
     designado: document.getElementById("editDesignado").value,
     cargo: document.getElementById("editCargo").value,
+    escola: document.getElementById("editEscola").value,
   };
 
   const { error } = await _supabase
     .from("validacoes")
-    .update(dadosAtualizados)
+    .update(dados)
     .eq("id", id);
 
   if (error) {
-    alert("Erro ao atualizar: " + error.message);
+    alert("Erro: " + error.message);
   } else {
     alert("Registro atualizado com sucesso!");
-    fecharModal();
-    carregarDados(); 
+    location.reload();
   }
 
-  btnSalvar.innerText = textoOriginal;
-  btnSalvar.disabled = false;
+  btnSave.innerText = originalText;
+  btnSave.disabled = false;
 }
