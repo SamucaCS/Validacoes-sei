@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SEI | Access Control Next</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+    <div class="glass-bg"></div>
+
+    <aside class="sidebar glass">
+      <div class="logo">
+        <i class="bx bxs-dashboard"></i> <span>SEI Admin</span>
+      </div>
+      <nav>
+        <a href="painel.html">
+          <i class="bx bx-grid-alt"></i>
+          Visão Geral
+        </a>
+
+        <a href="#" class="active">
+          <i class="bx bx-plus-circle"></i>
+          Novo Cadastro
+        </a>
+
+       
+      </nav>
+
+      <div class="logout">
+        <a href="#"><i class="bx bx-log-out"></i> Sair</a>
+      </div>
+    </aside>
+
+    <main class="dashboard-container center-focus">
+      <section class="card glass bounce-in">
+        <header>
+          <h2>Controle de Validação SEI</h2>
+          <p>Validação de Credenciais Educacionais</p>
+        </header>
+
+        <form id="seiForm">
+          <div class="input-field">
+            <input type="text" id="nome" placeholder=" " required />
+            <label>Nome Completo</label>
+          </div>
+
+          <div class="input-field">
+            <input type="text" id="cpf" placeholder=" " required />
+            <label>CPF</label>
+          </div>
+
+          <div class="select-field">
+            <label for="escola">Unidade Escolar</label>
+            <select id="escola" name="escola" required>
+              <option value="">Selecione a escola...</option>
+              <option value="ALFREDO ROBERTO">ALFREDO ROBERTO</option>
+              <option value="ALICE ROMANOS PROFESSORA">
+                ALICE ROMANOS PROFESSORA
+              </option>
+              <option value="ANDERSON DA SILVA SOARES">
+                ANDERSON DA SILVA SOARES
+              </option>
+              <option value="ANGELA SUELI PONTES DIAS PROFESSORA">
+                ANGELA SUELI PONTES DIAS PROFESSORA
+              </option>
+              <option value="ANIS FADUL DOUTOR">ANIS FADUL DOUTOR</option>
+              <option value="ANTONIO BRASILIO MENEZES DA FONSECA PROFESSOR">
+                ANTONIO BRASILIO MENEZES DA FONSECA PROFESSOR
+              </option>
+              <option value="ANTONIO GARCIA VEREADOR">
+                ANTONIO GARCIA VEREADOR
+              </option>
+              <option value="ANTONIO JOSE CAMPOS DE MENEZES PROFESSOR">
+                ANTONIO JOSE CAMPOS DE MENEZES PROFESSOR
+              </option>
+              <option value="ANTONIO RODRIGUES DE ALMEIDA">
+                ANTONIO RODRIGUES DE ALMEIDA
+              </option>
+              <option value="ANTONIO VALDEMAR GALO VEREADOR">
+                ANTONIO VALDEMAR GALO VEREADOR
+              </option>
+              <option value="BATISTA RENZI">BATISTA RENZI</option>
+              <option value="BENEDITA DE CAMPOS MARCOLONGO PROFESSORA">
+                BENEDITA DE CAMPOS MARCOLONGO PROFESSORA
+              </option>
+              <option value="BRASILIO MACHADO NETO COMENDADOR">
+                BRASILIO MACHADO NETO COMENDADOR
+              </option>
+              <option value="CARLINDO REIS">CARLINDO REIS</option>
+              <option value="CARLOS MOLTENI PROFESSOR">
+                CARLOS MOLTENI PROFESSOR
+              </option>
+              <option value="CHOJIRO SEGAWA">CHOJIRO SEGAWA</option>
+              <option value="CONJUNTO HABITACIONAL PARQUE DOURADO II">
+                CONJUNTO HABITACIONAL PARQUE DOURADO II
+              </option>
+              <option value="DAVID JORGE CURI PROFESSOR">
+                DAVID JORGE CURI PROFESSOR
+              </option>
+              <option value="EDIR DO COUTO ROSA PROFESSOR">
+                EDIR DO COUTO ROSA PROFESSOR
+              </option>
+              <option value="ELIANE APARECIDA DANTAS DA SILVA PROFESSORA">
+                ELIANE APARECIDA DANTAS DA SILVA PROFESSORA
+              </option>
+              <option value="EUCLIDES IGESCA">EUCLIDES IGESCA</option>
+              <option value="GERALDO JUSTINIANO DE REZENDE SILVA PROFESSOR">
+                GERALDO JUSTINIANO DE REZENDE SILVA PROFESSOR
+              </option>
+              <option value="GILBERTO DE CARVALHO PROFESSOR">
+                GILBERTO DE CARVALHO PROFESSOR
+              </option>
+              <option value="GIOVANNI BATTISTA RAFFO PROFESSOR DOUTOR">
+                GIOVANNI BATTISTA RAFFO PROFESSOR DOUTOR
+              </option>
+              <option value="HELENA ZERRENNER">HELENA ZERRENNER</option>
+              <option value="IGNES CORREA ALLEN PROFESSORA">
+                IGNES CORREA ALLEN PROFESSORA
+              </option>
+              <option value="IIJIMA">IIJIMA</option>
+              <option value="JACQUES YVES COUSTEAU COMANDANTE">
+                JACQUES YVES COUSTEAU COMANDANTE
+              </option>
+              <option value="JANDYRA COUTINHO PROFESSORA">
+                JANDYRA COUTINHO PROFESSORA
+              </option>
+              <option value="JARDIM SAO PAULO II">JARDIM SAO PAULO II</option>
+              <option value="JOSE BENEDITO LEITE BARTHOLOMEI PROFESSOR">
+                JOSE BENEDITO LEITE BARTHOLOMEI PROFESSOR
+              </option>
+              <option value="JOSE CAMILO DE ANDRADE">
+                JOSE CAMILO DE ANDRADE
+              </option>
+              <option value="JOSE EDUARDO VIEIRA RADUAN DOUTOR">
+                JOSE EDUARDO VIEIRA RADUAN DOUTOR
+              </option>
+              <option value="JOSE PAPAIZ PROFESSOR">
+                JOSE PAPAIZ PROFESSOR
+              </option>
+              <option value="JOVIANO SATLER DE LIMA PROFESSOR">
+                JOVIANO SATLER DE LIMA PROFESSOR
+              </option>
+              <option value="JUSSARA FEITOSA DOMSCHKE PROFESSORA">
+                JUSSARA FEITOSA DOMSCHKE PROFESSORA
+              </option>
+              <option value="JUSTINO MARCONDES RANGEL PROFESSOR">
+                JUSTINO MARCONDES RANGEL PROFESSOR
+              </option>
+              <option value="LANDIA SANTOS BATISTA PROFESSORA">
+                LANDIA SANTOS BATISTA PROFESSORA
+              </option>
+              <option value="LEDA FERNANDES LOPES PROFESSORA">
+                LEDA FERNANDES LOPES PROFESSORA
+              </option>
+              <option value="LUCY FRANCO KOWALSKI PROFESSORA">
+                LUCY FRANCO KOWALSKI PROFESSORA
+              </option>
+              <option value="LUIZ BIANCONI">LUIZ BIANCONI</option>
+              <option value="LUIZA HIDAKA PROFESSORA">
+                LUIZA HIDAKA PROFESSORA
+              </option>
+              <option value="MANUEL DOS SANTOS PAIVA">
+                MANUEL DOS SANTOS PAIVA
+              </option>
+              <option value="MARIA ELISA DE AZEVEDO CINTRA PROFESSORA">
+                MARIA ELISA DE AZEVEDO CINTRA PROFESSORA
+              </option>
+              <option value="MARIO MANOEL DANTAS DE AQUINO PROFESSOR">
+                MARIO MANOEL DANTAS DE AQUINO PROFESSOR
+              </option>
+              <option value="MARTHA CALIXTO CAZAGRANDE">
+                MARTHA CALIXTO CAZAGRANDE
+              </option>
+              <option value="MASAITI SEKINE PROFESSOR">
+                MASAITI SEKINE PROFESSOR
+              </option>
+              <option value="MORATO DE OLIVEIRA DOUTOR">
+                MORATO DE OLIVEIRA DOUTOR
+              </option>
+              <option value="OLAVO LEONEL FERREIRA PROFESSOR">
+                OLAVO LEONEL FERREIRA PROFESSOR
+              </option>
+              <option value="OLZANETTI GOMES PROFESSOR">
+                OLZANETTI GOMES PROFESSOR
+              </option>
+              <option value="OSWALDO DE OLIVEIRA LIMA">
+                OSWALDO DE OLIVEIRA LIMA
+              </option>
+              <option value="PAULO AMERICO PAGANUCCI PROFESSOR">
+                PAULO AMERICO PAGANUCCI PROFESSOR
+              </option>
+              <option value="PAULO KOBAYASHI PROFESSOR">
+                PAULO KOBAYASHI PROFESSOR
+              </option>
+              <option value="RAUL BRASIL PROFESSOR">
+                RAUL BRASIL PROFESSOR
+              </option>
+              <option value="ROBERTO BIANCHI">ROBERTO BIANCHI</option>
+              <option value="SEBASTIAO PEREIRA VIDAL">
+                SEBASTIAO PEREIRA VIDAL
+              </option>
+              <option value="TACITO ZANCHETTA PREFEITO">
+                TACITO ZANCHETTA PREFEITO
+              </option>
+              <option value="TOCHICHICO YOCHICAVA PROFESSOR">
+                TOCHICHICO YOCHICAVA PROFESSOR
+              </option>
+              <option value="TOKUZO TERAZAKI">TOKUZO TERAZAKI</option>
+              <option value="YOLANDA BASSI PROFESSORA">
+                YOLANDA BASSI PROFESSORA
+              </option>
+              <option value="ZEIKICHI FUKUOKA">ZEIKICHI FUKUOKA</option>
+              <option value="ZELIA GATTAI AMADO">ZELIA GATTAI AMADO</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <div class="select-field">
+              <label>Designado</label>
+              <select id="designado">
+                <option value="Sim">Sim</option>
+                <option value="Não">Não</option>
+              </select>
+            </div>
+            <div class="select-field">
+              <label>Cargo</label>
+              <select id="cargo">
+                <option value="Diretor">Diretor</option>
+                <option value="Vice Diretor">Vice Diretor</option>
+                <option value="Coordenador">Coordenador</option>
+                <option value="Agente Organizacional">
+                  Agente Organizacional
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-glow">Validar Acesso</button>
+        </form>
+      </section>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>

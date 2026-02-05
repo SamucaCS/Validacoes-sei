@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | SEI Control</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+    <div class="glass-bg"></div>
+
+    <aside class="sidebar glass">
+      <div class="logo">
+        <i class="bx bxs-dashboard"></i>
+        <span>SEI Admin</span>
+      </div>
+      <nav>
+        <a href="#" class="active"
+          ><i class="bx bx-grid-alt"></i> Visão Geral</a
+        >
+        <a href="index.html"><i class="bx bx-plus-circle"></i> Novo Cadastro</a>
+      </nav>
+      <div class="logout">
+        <a href="index.html"><i class="bx bx-log-out"></i> Sair</a>
+      </div>
+    </aside>
+
+    <main class="dashboard-container">
+      <header class="dash-header">
+        <div class="title-section">
+          <h1>Painel de Controle</h1>
+          <p>Monitoramento de quadro escolar</p>
+        </div>
+      </header>
+
+      <section class="stats-grid">
+        <div class="stat-card glass-sm">
+          <div class="icon-box blue"><i class="bx bx-check-shield"></i></div>
+          <div class="info">
+            <h3 id="statDesignados">0</h3>
+            <p>Designados</p>
+          </div>
+        </div>
+        <div class="stat-card glass-sm">
+          <div class="icon-box red"><i class="bx bx-x-circle"></i></div>
+          <div class="info">
+            <h3 id="statCessados">0</h3>
+            <p>Cessados</p>
+          </div>
+        </div>
+        <div class="stat-card glass-sm">
+          <div class="icon-box green"><i class="bx bx-briefcase"></i></div>
+          <div class="info">
+            <h3 id="statDiretores">0</h3>
+            <p>Diretores</p>
+          </div>
+        </div>
+        <div class="stat-card glass-sm">
+          <div class="icon-box purple"><i class="bx bx-id-card"></i></div>
+          <div class="info">
+            <h3 id="statVices">0</h3>
+            <p>Vice-Diretores</p>
+          </div>
+        </div>
+        <div class="stat-card glass-sm">
+          <div class="icon-box teal"><i class="bx bx-intersect"></i></div>
+          <div class="info">
+            <h3 id="statCoordenadores">0</h3>
+            <p>Coordenadores</p>
+          </div>
+        </div>
+        <div class="stat-card glass-sm">
+          <div class="icon-box orange"><i class="bx bx-file"></i></div>
+          <div class="info">
+            <h3 id="statAOE">0</h3>
+            <p>Agentes (AOE)</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="table-section glass">
+        <div class="table-header">
+          <h2>Registros Recentes</h2>
+          <div class="actions">
+            <div class="filter-box">
+              <i class="bx bx-filter-alt"></i>
+              <select id="filtroCargo">
+                <option value="">Todos os Cargos</option>
+                <option value="Diretor">Diretor</option>
+                <option value="Vice Diretor">Vice Diretor</option>
+                <option value="Coordenador">Coordenador</option>
+                <option value="Agente Organizacional">
+                  Agente Organizacional
+                </option>
+              </select>
+            </div>
+            <div class="search-box">
+              <i class="bx bx-search"></i>
+              <input
+                type="text"
+                id="search"
+                placeholder="Buscar nome ou CPF..."
+              />
+            </div>
+            <button onclick="carregarDados()" class="btn-refresh-icon">
+              <i class="bx bx-refresh"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Colaborador</th>
+                <th>CPF</th>
+                <th>Unidade Escolar</th>
+                <th>Cargo</th>
+                <th>Designado</th>
+                <th>Status</th>
+                <th style="text-align: center">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaDados"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <div id="modalEdicao" class="modal-overlay hidden">
+      <div class="card glass modal-content">
+        <div class="modal-header">
+          <h3>Editar Registro</h3>
+          <button onclick="fecharModal()" class="btn-close">
+            <i class="bx bx-x"></i>
+          </button>
+        </div>
+
+        <form id="formEdicao">
+          <input type="hidden" id="editId" />
+          <div class="input-field">
+            <input type="text" id="editNome" placeholder=" " required />
+            <label>Nome Completo</label>
+          </div>
+
+          <div class="input-field">
+            <input type="text" id="editCpf" placeholder=" " required />
+            <label>CPF</label>
+          </div>
+
+          <div class="select-field">
+            <label>Unidade Escolar</label>
+            <select id="editEscola" required>
+              <option value="">Selecione...</option>
+              <option value="ALFREDO ROBERTO">ALFREDO ROBERTO</option>
+              <option value="ALICE ROMANOS PROFESSORA">
+                ALICE ROMANOS PROFESSORA
+              </option>
+              <option value="Outra">Manter Atual (Se não listado)</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <div class="select-field">
+              <label>Designado</label>
+              <select id="editDesignado">
+                <option value="Sim">Sim</option>
+                <option value="Não">Não</option>
+              </select>
+            </div>
+            <div class="select-field">
+              <label>Cargo</label>
+              <select id="editCargo">
+                <option value="Diretor">Diretor</option>
+                <option value="Vice Diretor">Vice Diretor</option>
+                <option value="Coordenador">Coordenador</option>
+                <option value="Agente Organizacional">
+                  Agente Organizacional
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" onclick="fecharModal()" class="btn-cancel">
+              Cancelar
+            </button>
+            <button type="submit" class="btn-save">Salvar Alterações</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
