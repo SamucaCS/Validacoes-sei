@@ -3,64 +3,93 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SEI | Access Control Next</title>
-
+    <title>SEI | Novo Cadastro</title>
     <link rel="stylesheet" href="style.css" />
-
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap"
       rel="stylesheet"
     />
-
     <link
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
     />
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   </head>
   <body>
     <div class="glass-bg"></div>
 
-    <aside class="sidebar glass">
+    <aside class="sidebar">
       <div class="logo">
         <i class="bx bxs-dashboard"></i> <span>SEI Admin</span>
       </div>
       <nav>
-        <a href="painel.html">
-          <i class="bx bx-grid-alt"></i>
-          Visão Geral
+        <h4>Dashboards</h4>
+        <a href="painel.html?view=geral">
+          <i class="bx bx-grid-alt"></i> Visão Geral
+        </a>
+        <a href="painel.html?view=gabinete">
+          <i class="bx bxs-building-house"></i> Painel Gabinete
+        </a>
+        <a href="painel.html?view=seape">
+          <i class="bx bxs-user-badge"></i> Painel Seape
         </a>
 
+        <h4>Ações</h4>
         <a href="#" class="active">
-          <i class="bx bx-plus-circle"></i>
-          Novo Cadastro
+          <i class="bx bx-plus-circle"></i> Novo Cadastro
         </a>
-
-       
       </nav>
-
       <div class="logout">
         <a href="#"><i class="bx bx-log-out"></i> Sair</a>
       </div>
     </aside>
 
-    <main class="dashboard-container center-focus">
-      <section class="card glass bounce-in">
-        <header>
-          <h2>Controle de Validação SEI</h2>
-          <p>Validação de Credenciais Educacionais</p>
+    <main class="dashboard-container">
+      <section class="card">
+        <header style="text-align: center; margin-bottom: 30px">
+          <h2 style="color: var(--color-dark)">Novo Registro</h2>
+          <p style="color: var(--text-light)">
+            Preencha os dados do servidor para validação
+          </p>
         </header>
 
         <form id="seiForm">
-          <div class="input-field">
-            <input type="text" id="nome" placeholder=" " required />
+          <div class="select-field">
+            <label>Setor Responsável (Origem)</label>
+            <select
+              id="origem"
+              required
+              style="border-color: var(--color-purple)"
+            >
+              <option value="Gabinete">Gabinete</option>
+              <option value="Seape">Seape</option>
+            </select>
+          </div>
+
+          <div class="input-field" style="margin-top: 30px">
             <label>Nome Completo</label>
+            <input type="text" id="nome" required />
+          </div>
+
+          <div class="row">
+            <div class="input-field">
+              <label>CPF</label>
+              <input
+                type="text"
+                id="cpf"
+                placeholder="000.000.000-00"
+                required
+              />
+            </div>
+            <div class="input-field">
+              <label>RG (CIN)</label>
+              <input type="text" id="rg" placeholder="00.000.000-0" />
+            </div>
           </div>
 
           <div class="input-field">
-            <input type="text" id="cpf" placeholder=" " required />
-            <label>CPF</label>
+            <label>E-mail Institucional/Pessoal</label>
+            <input type="email" id="email" placeholder="exemplo@email.com" />
           </div>
 
           <div class="select-field">
@@ -230,10 +259,10 @@
 
           <div class="row">
             <div class="select-field">
-              <label>Designado</label>
+              <label>Situação</label>
               <select id="designado">
-                <option value="Sim">Sim</option>
-                <option value="Não">Não</option>
+                <option value="Designado">Designado</option>
+                <option value="Cessado">Cessado</option>
               </select>
             </div>
             <div class="select-field">
@@ -249,7 +278,7 @@
             </div>
           </div>
 
-          <button type="submit" class="btn-glow">Validar Acesso</button>
+          <button type="submit" class="btn-glow">Salvar Registro</button>
         </form>
       </section>
     </main>
