@@ -18,6 +18,11 @@
   <body>
     <div class="glass-bg"></div>
 
+    <button id="menuToggle" class="menu-toggle">
+      <i class="bx bx-menu"></i>
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
     <aside class="sidebar">
       <div class="logo">
         <i class="bx bxs-dashboard"></i> <span>SEI Admin</span>
@@ -36,7 +41,7 @@
 
         <h4>Ações</h4>
         <a href="index.html">
-          <i class="bx bx-plus-circle"></i> Solicitações SEI
+          <i class="bx bx-plus-circle"></i> Novo Cadastro
         </a>
       </nav>
       <div class="logout">
@@ -52,7 +57,7 @@
         </div>
         <div
           class="user-profile"
-          style="font-weight: bold; color: var(--color-purple)"
+          style="font-weight: bold; color: var(--color-royal)"
         >
           <i class="bx bx-filter"></i>
           <span id="filtroAtivoTexto">Todos os registros</span>
@@ -163,7 +168,6 @@
           <div class="input-field">
             <input type="text" id="editNome" required /><label>Nome</label>
           </div>
-
           <div class="row">
             <div class="input-field">
               <input type="text" id="editCpf" required /><label>CPF</label>
@@ -172,7 +176,6 @@
               <input type="text" id="editRg" /><label>RG</label>
             </div>
           </div>
-
           <div class="input-field">
             <input type="email" id="editEmail" /><label>Email</label>
           </div>
@@ -384,4 +387,3 @@
     <script src="script.js"></script>
   </body>
 </html>
-
