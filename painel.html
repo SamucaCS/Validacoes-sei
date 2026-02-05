@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard | SEI Control</title>
+    <title>SEI | Painel de Controle</title>
     <link rel="stylesheet" href="style.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
@@ -18,83 +18,100 @@
   <body>
     <div class="glass-bg"></div>
 
-    <aside class="sidebar glass">
+    <aside class="sidebar">
       <div class="logo">
-        <i class="bx bxs-dashboard"></i>
-        <span>SEI Admin</span>
+        <i class="bx bxs-dashboard"></i> <span>SEI Admin</span>
       </div>
       <nav>
-        <a href="#" class="active"
-          ><i class="bx bx-grid-alt"></i> Visão Geral</a
-        >
-        <a href="index.html"><i class="bx bx-plus-circle"></i> Novo Cadastro</a>
+        <h4>Dashboards</h4>
+        <a href="painel.html?view=geral" id="linkGeral">
+          <i class="bx bx-grid-alt"></i> Visão Geral
+        </a>
+        <a href="painel.html?view=gabinete" id="linkGabinete">
+          <i class="bx bxs-building-house"></i> Painel Gabinete
+        </a>
+        <a href="painel.html?view=seape" id="linkSeape">
+          <i class="bx bxs-user-badge"></i> Painel Seape
+        </a>
+
+        <h4>Ações</h4>
+        <a href="index.html">
+          <i class="bx bx-plus-circle"></i> Novo Cadastro
+        </a>
       </nav>
       <div class="logout">
         <a href="index.html"><i class="bx bx-log-out"></i> Sair</a>
       </div>
     </aside>
 
-    <main class="dashboard-container">
+    <main class="dashboard-container painel-mode">
       <header class="dash-header">
         <div class="title-section">
-          <h1>Painel de Controle</h1>
+          <h1 id="pageTitle">Visão Geral</h1>
           <p>Monitoramento de quadro escolar</p>
+        </div>
+        <div
+          class="user-profile"
+          style="font-weight: bold; color: var(--color-purple)"
+        >
+          <i class="bx bx-filter"></i>
+          <span id="filtroAtivoTexto">Todos os registros</span>
         </div>
       </header>
 
       <section class="stats-grid">
-        <div class="stat-card glass-sm">
+        <div class="stat-card">
           <div class="icon-box blue"><i class="bx bx-check-shield"></i></div>
           <div class="info">
             <h3 id="statDesignados">0</h3>
             <p>Designados</p>
           </div>
         </div>
-        <div class="stat-card glass-sm">
+        <div class="stat-card">
           <div class="icon-box red"><i class="bx bx-x-circle"></i></div>
           <div class="info">
             <h3 id="statCessados">0</h3>
             <p>Cessados</p>
           </div>
         </div>
-        <div class="stat-card glass-sm">
+        <div class="stat-card">
           <div class="icon-box green"><i class="bx bx-briefcase"></i></div>
           <div class="info">
             <h3 id="statDiretores">0</h3>
             <p>Diretores</p>
           </div>
         </div>
-        <div class="stat-card glass-sm">
+        <div class="stat-card">
           <div class="icon-box purple"><i class="bx bx-id-card"></i></div>
           <div class="info">
             <h3 id="statVices">0</h3>
-            <p>Vice-Diretores</p>
+            <p>Vices</p>
           </div>
         </div>
-        <div class="stat-card glass-sm">
+        <div class="stat-card">
           <div class="icon-box teal"><i class="bx bx-intersect"></i></div>
           <div class="info">
             <h3 id="statCoordenadores">0</h3>
-            <p>Coordenadores</p>
+            <p>Coords.</p>
           </div>
         </div>
-        <div class="stat-card glass-sm">
+        <div class="stat-card">
           <div class="icon-box orange"><i class="bx bx-file"></i></div>
           <div class="info">
             <h3 id="statAOE">0</h3>
-            <p>Agentes (AOE)</p>
+            <p>AOE</p>
           </div>
         </div>
       </section>
 
-      <section class="table-section glass">
+      <section class="table-section">
         <div class="table-header">
-          <h2>Registros Recentes</h2>
+          <h2>Registros</h2>
           <div class="actions">
             <div class="filter-box">
               <i class="bx bx-filter-alt"></i>
               <select id="filtroCargo">
-                <option value="">Todos os Cargos</option>
+                <option value="">Todos Cargos</option>
                 <option value="Diretor">Diretor</option>
                 <option value="Vice Diretor">Vice Diretor</option>
                 <option value="Coordenador">Coordenador</option>
@@ -105,11 +122,7 @@
             </div>
             <div class="search-box">
               <i class="bx bx-search"></i>
-              <input
-                type="text"
-                id="search"
-                placeholder="Buscar nome ou CPF..."
-              />
+              <input type="text" id="search" placeholder="Buscar..." />
             </div>
             <button onclick="carregarDados()" class="btn-refresh-icon">
               <i class="bx bx-refresh"></i>
@@ -121,13 +134,13 @@
           <table>
             <thead>
               <tr>
+                <th>Origem</th>
                 <th>Colaborador</th>
-                <th>CPF</th>
+                <th>Docs (CPF/RG)</th>
                 <th>Unidade Escolar</th>
                 <th>Cargo</th>
-                <th>Designado</th>
-                <th>Status</th>
-                <th style="text-align: center">Ações</th>
+                <th>Situação</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody id="tabelaDados"></tbody>
@@ -137,57 +150,225 @@
     </main>
 
     <div id="modalEdicao" class="modal-overlay hidden">
-      <div class="card glass modal-content">
+      <div class="card modal-content">
         <div class="modal-header">
           <h3>Editar Registro</h3>
           <button onclick="fecharModal()" class="btn-close">
             <i class="bx bx-x"></i>
           </button>
         </div>
-
         <form id="formEdicao">
           <input type="hidden" id="editId" />
+
           <div class="input-field">
-            <input type="text" id="editNome" placeholder=" " required />
-            <label>Nome Completo</label>
+            <input type="text" id="editNome" required /><label>Nome</label>
+          </div>
+
+          <div class="row">
+            <div class="input-field">
+              <input type="text" id="editCpf" required /><label>CPF</label>
+            </div>
+            <div class="input-field">
+              <input type="text" id="editRg" /><label>RG</label>
+            </div>
           </div>
 
           <div class="input-field">
-            <input type="text" id="editCpf" placeholder=" " required />
-            <label>CPF</label>
+            <input type="email" id="editEmail" /><label>Email</label>
           </div>
 
           <div class="select-field">
             <label>Unidade Escolar</label>
             <select id="editEscola" required>
-              <option value="">Selecione...</option>
               <option value="ALFREDO ROBERTO">ALFREDO ROBERTO</option>
               <option value="ALICE ROMANOS PROFESSORA">
                 ALICE ROMANOS PROFESSORA
               </option>
-              <option value="Outra">Manter Atual (Se não listado)</option>
+              <option value="ANDERSON DA SILVA SOARES">
+                ANDERSON DA SILVA SOARES
+              </option>
+              <option value="ANGELA SUELI PONTES DIAS PROFESSORA">
+                ANGELA SUELI PONTES DIAS PROFESSORA
+              </option>
+              <option value="ANIS FADUL DOUTOR">ANIS FADUL DOUTOR</option>
+              <option value="ANTONIO BRASILIO MENEZES DA FONSECA PROFESSOR">
+                ANTONIO BRASILIO MENEZES DA FONSECA PROFESSOR
+              </option>
+              <option value="ANTONIO GARCIA VEREADOR">
+                ANTONIO GARCIA VEREADOR
+              </option>
+              <option value="ANTONIO JOSE CAMPOS DE MENEZES PROFESSOR">
+                ANTONIO JOSE CAMPOS DE MENEZES PROFESSOR
+              </option>
+              <option value="ANTONIO RODRIGUES DE ALMEIDA">
+                ANTONIO RODRIGUES DE ALMEIDA
+              </option>
+              <option value="ANTONIO VALDEMAR GALO VEREADOR">
+                ANTONIO VALDEMAR GALO VEREADOR
+              </option>
+              <option value="BATISTA RENZI">BATISTA RENZI</option>
+              <option value="BENEDITA DE CAMPOS MARCOLONGO PROFESSORA">
+                BENEDITA DE CAMPOS MARCOLONGO PROFESSORA
+              </option>
+              <option value="BRASILIO MACHADO NETO COMENDADOR">
+                BRASILIO MACHADO NETO COMENDADOR
+              </option>
+              <option value="CARLINDO REIS">CARLINDO REIS</option>
+              <option value="CARLOS MOLTENI PROFESSOR">
+                CARLOS MOLTENI PROFESSOR
+              </option>
+              <option value="CHOJIRO SEGAWA">CHOJIRO SEGAWA</option>
+              <option value="CONJUNTO HABITACIONAL PARQUE DOURADO II">
+                CONJUNTO HABITACIONAL PARQUE DOURADO II
+              </option>
+              <option value="DAVID JORGE CURI PROFESSOR">
+                DAVID JORGE CURI PROFESSOR
+              </option>
+              <option value="EDIR DO COUTO ROSA PROFESSOR">
+                EDIR DO COUTO ROSA PROFESSOR
+              </option>
+              <option value="ELIANE APARECIDA DANTAS DA SILVA PROFESSORA">
+                ELIANE APARECIDA DANTAS DA SILVA PROFESSORA
+              </option>
+              <option value="EUCLIDES IGESCA">EUCLIDES IGESCA</option>
+              <option value="GERALDO JUSTINIANO DE REZENDE SILVA PROFESSOR">
+                GERALDO JUSTINIANO DE REZENDE SILVA PROFESSOR
+              </option>
+              <option value="GILBERTO DE CARVALHO PROFESSOR">
+                GILBERTO DE CARVALHO PROFESSOR
+              </option>
+              <option value="GIOVANNI BATTISTA RAFFO PROFESSOR DOUTOR">
+                GIOVANNI BATTISTA RAFFO PROFESSOR DOUTOR
+              </option>
+              <option value="HELENA ZERRENNER">HELENA ZERRENNER</option>
+              <option value="IGNES CORREA ALLEN PROFESSORA">
+                IGNES CORREA ALLEN PROFESSORA
+              </option>
+              <option value="IIJIMA">IIJIMA</option>
+              <option value="JACQUES YVES COUSTEAU COMANDANTE">
+                JACQUES YVES COUSTEAU COMANDANTE
+              </option>
+              <option value="JANDYRA COUTINHO PROFESSORA">
+                JANDYRA COUTINHO PROFESSORA
+              </option>
+              <option value="JARDIM SAO PAULO II">JARDIM SAO PAULO II</option>
+              <option value="JOSE BENEDITO LEITE BARTHOLOMEI PROFESSOR">
+                JOSE BENEDITO LEITE BARTHOLOMEI PROFESSOR
+              </option>
+              <option value="JOSE CAMILO DE ANDRADE">
+                JOSE CAMILO DE ANDRADE
+              </option>
+              <option value="JOSE EDUARDO VIEIRA RADUAN DOUTOR">
+                JOSE EDUARDO VIEIRA RADUAN DOUTOR
+              </option>
+              <option value="JOSE PAPAIZ PROFESSOR">
+                JOSE PAPAIZ PROFESSOR
+              </option>
+              <option value="JOVIANO SATLER DE LIMA PROFESSOR">
+                JOVIANO SATLER DE LIMA PROFESSOR
+              </option>
+              <option value="JUSSARA FEITOSA DOMSCHKE PROFESSORA">
+                JUSSARA FEITOSA DOMSCHKE PROFESSORA
+              </option>
+              <option value="JUSTINO MARCONDES RANGEL PROFESSOR">
+                JUSTINO MARCONDES RANGEL PROFESSOR
+              </option>
+              <option value="LANDIA SANTOS BATISTA PROFESSORA">
+                LANDIA SANTOS BATISTA PROFESSORA
+              </option>
+              <option value="LEDA FERNANDES LOPES PROFESSORA">
+                LEDA FERNANDES LOPES PROFESSORA
+              </option>
+              <option value="LUCY FRANCO KOWALSKI PROFESSORA">
+                LUCY FRANCO KOWALSKI PROFESSORA
+              </option>
+              <option value="LUIZ BIANCONI">LUIZ BIANCONI</option>
+              <option value="LUIZA HIDAKA PROFESSORA">
+                LUIZA HIDAKA PROFESSORA
+              </option>
+              <option value="MANUEL DOS SANTOS PAIVA">
+                MANUEL DOS SANTOS PAIVA
+              </option>
+              <option value="MARIA ELISA DE AZEVEDO CINTRA PROFESSORA">
+                MARIA ELISA DE AZEVEDO CINTRA PROFESSORA
+              </option>
+              <option value="MARIO MANOEL DANTAS DE AQUINO PROFESSOR">
+                MARIO MANOEL DANTAS DE AQUINO PROFESSOR
+              </option>
+              <option value="MARTHA CALIXTO CAZAGRANDE">
+                MARTHA CALIXTO CAZAGRANDE
+              </option>
+              <option value="MASAITI SEKINE PROFESSOR">
+                MASAITI SEKINE PROFESSOR
+              </option>
+              <option value="MORATO DE OLIVEIRA DOUTOR">
+                MORATO DE OLIVEIRA DOUTOR
+              </option>
+              <option value="OLAVO LEONEL FERREIRA PROFESSOR">
+                OLAVO LEONEL FERREIRA PROFESSOR
+              </option>
+              <option value="OLZANETTI GOMES PROFESSOR">
+                OLZANETTI GOMES PROFESSOR
+              </option>
+              <option value="OSWALDO DE OLIVEIRA LIMA">
+                OSWALDO DE OLIVEIRA LIMA
+              </option>
+              <option value="PAULO AMERICO PAGANUCCI PROFESSOR">
+                PAULO AMERICO PAGANUCCI PROFESSOR
+              </option>
+              <option value="PAULO KOBAYASHI PROFESSOR">
+                PAULO KOBAYASHI PROFESSOR
+              </option>
+              <option value="RAUL BRASIL PROFESSOR">
+                RAUL BRASIL PROFESSOR
+              </option>
+              <option value="ROBERTO BIANCHI">ROBERTO BIANCHI</option>
+              <option value="SEBASTIAO PEREIRA VIDAL">
+                SEBASTIAO PEREIRA VIDAL
+              </option>
+              <option value="TACITO ZANCHETTA PREFEITO">
+                TACITO ZANCHETTA PREFEITO
+              </option>
+              <option value="TOCHICHICO YOCHICAVA PROFESSOR">
+                TOCHICHICO YOCHICAVA PROFESSOR
+              </option>
+              <option value="TOKUZO TERAZAKI">TOKUZO TERAZAKI</option>
+              <option value="YOLANDA BASSI PROFESSORA">
+                YOLANDA BASSI PROFESSORA
+              </option>
+              <option value="ZEIKICHI FUKUOKA">ZEIKICHI FUKUOKA</option>
+              <option value="ZELIA GATTAI AMADO">ZELIA GATTAI AMADO</option>
+              <option value="Outra">Outra</option>
             </select>
           </div>
 
           <div class="row">
             <div class="select-field">
-              <label>Designado</label>
-              <select id="editDesignado">
-                <option value="Sim">Sim</option>
-                <option value="Não">Não</option>
+              <label>Origem</label>
+              <select id="editOrigem">
+                <option value="Gabinete">Gabinete</option>
+                <option value="Seape">Seape</option>
               </select>
             </div>
             <div class="select-field">
-              <label>Cargo</label>
-              <select id="editCargo">
-                <option value="Diretor">Diretor</option>
-                <option value="Vice Diretor">Vice Diretor</option>
-                <option value="Coordenador">Coordenador</option>
-                <option value="Agente Organizacional">
-                  Agente Organizacional
-                </option>
+              <label>Situação</label>
+              <select id="editDesignado">
+                <option value="Designado">Designado</option>
+                <option value="Cessado">Cessado</option>
               </select>
             </div>
+          </div>
+
+          <div class="select-field">
+            <label>Cargo</label>
+            <select id="editCargo" required>
+              <option value="Diretor">Diretor</option>
+              <option value="Vice Diretor">Vice Diretor</option>
+              <option value="Coordenador">Coordenador</option>
+              <option value="Agente Organizacional">
+                Agente Organizacional
+              </option>
+            </select>
           </div>
 
           <div class="modal-actions">
