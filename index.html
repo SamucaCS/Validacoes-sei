@@ -18,6 +18,11 @@
   <body>
     <div class="glass-bg"></div>
 
+    <button id="menuToggle" class="menu-toggle">
+      <i class="bx bx-menu"></i>
+    </button>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
     <aside class="sidebar">
       <div class="logo">
         <i class="bx bxs-dashboard"></i> <span>SEI Admin</span>
@@ -36,7 +41,7 @@
 
         <h4>Ações</h4>
         <a href="#" class="active">
-          <i class="bx bx-plus-circle"></i> Solicitações SEI
+          <i class="bx bx-plus-circle"></i> Novo Cadastro
         </a>
       </nav>
       <div class="logout">
@@ -59,7 +64,7 @@
             <select
               id="origem"
               required
-              style="border-color: var(--color-purple)"
+              style="border-color: var(--color-royal)"
             >
               <option value="Gabinete">Gabinete</option>
               <option value="Seape">Seape</option>
@@ -285,4 +290,3 @@
     <script src="script.js"></script>
   </body>
 </html>
-
